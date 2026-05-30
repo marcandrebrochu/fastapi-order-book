@@ -1,7 +1,7 @@
 [project]
 name = "fastapi-market-sim"
 version = "0.1.0"
-description = "Add your description here"
+description = "Basic market simulator and an API for it"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
