@@ -1,3 +1,4 @@
+import uuid
 from typing import Annotated
 from fastapi import FastAPI, Path, Query, status
 from pydantic import BaseModel
@@ -25,6 +26,9 @@ app = FastAPI(
 class Pair(BaseModel):
     base: str
     quote: str
+
+class Order(BaseModel):
+    id: uuid.UUID
 
 @app.get(
     "/pairs",
@@ -73,7 +77,7 @@ def get_book_for_pair(
     summary="Place an order",
     tags=["orders"],
 )
-def place_order(pair_id: str):
+def place_order(pair_id: str) -> Order:
     pass
 
 @app.put(
@@ -81,7 +85,7 @@ def place_order(pair_id: str):
     summary="Modify an order",
     tags=["orders"],
 )
-def modify_order(order_id: str):
+def modify_order(order_id: uuid.UUID):
     pass
 
 @app.delete(
@@ -89,5 +93,5 @@ def modify_order(order_id: str):
     summary="Cancel an order",
     tags=["orders"],
 )
-def cancel_order(order_id: str):
+def cancel_order(order_id: uuid.UUID):
     pass
