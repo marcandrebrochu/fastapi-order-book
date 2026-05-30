@@ -26,11 +26,11 @@ An agent (a generic term meaning "one that acts or exerts power") is any partici
 Trading always happens in a trading pair, which consists of a two assets:
 the base asset, which is what is being bought or sold, and the quote asset, which is what the base asset is priced in.
 Each asset is identified by a symbol (also called a "ticker").
-A trading pair is written as `BASE SYMBOL/QUOTE SYMBOL`.
+A trading pair is written as `BASESYMBOL:QUOTESYMBOL`.
 
 For instance, an agent could be interested in exchanging chickpeas (symbol: `CHKP`) for cactus seeds (symbol: `CACTUS`).
-They can do so via the `CHKP/CACTUS` pair, where chickpeas are quoted in cactus seeds.
-The inverse pair `CACTUS/CHKP` also exists conceptually, but as market operators we avoid listing both a pair and its dual simultaneously.
+They can do so via the `CHKP:CACTUS` pair, where chickpeas are quoted in cactus seeds.
+The inverse pair `CACTUS:CHKP` also exists conceptually, but as market operators we avoid listing both a pair and its dual simultaneously.
 
 #### Orders
 
