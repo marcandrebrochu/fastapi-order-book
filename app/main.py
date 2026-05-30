@@ -1,7 +1,8 @@
 import uuid
-from typing import Annotated
-from fastapi import FastAPI, Path, Query, status
-from pydantic import BaseModel
+from enum import Enum
+from typing import Annotated, Literal, Union
+from fastapi import FastAPI, Path, Query, Body, status
+from pydantic import BaseModel, Field
 
 app = FastAPI(
     title="Market Sim",
@@ -23,12 +24,25 @@ app = FastAPI(
     },
 )
 
+class OrderSide(str, Enum):
+    buy = "buy"
+    sell = "sell"
+
 class Pair(BaseModel):
     base: str
     quote: str
 
-class Order(BaseModel):
+class BaseOrder(BaseModel):
     id: uuid.UUID
+    side: OrderSide
+    quantity: int
+
+class MarketOrder(BaseOrder):
+    type: Literal["market"]
+
+class LimitOrder(BaseOrder):
+    type: Literal["limit"]
+    price: int
 
 @app.get(
     "/pairs",
@@ -77,8 +91,11 @@ def get_book_for_pair(
     summary="Place an order",
     tags=["orders"],
 )
-def place_order(pair_id: str) -> Order:
-    pass
+def place_order(
+    order: Annotated[Union[LimitOrder, MarketOrder], Field(discriminator="type")],
+    pair_id: str,
+) -> LimitOrder | MarketOrder:
+    return order
 
 @app.put(
     "/orders/{order_id}",
