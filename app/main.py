@@ -1,26 +1,17 @@
 from fastapi import FastAPI
 
-from app.routers import orders, pairs
+from app.api.main import api_router
+from app.core.config import settings
+
 
 app = FastAPI(
     title="Market Sim",
-    description="Basic market and order book engine",
+    description="Basic order book engine",
     version="0.0.1",
-    openapi_tags=[
-        {
-            "name": "pairs",
-            "description": "Operations with asset pairs",
-        },
-        {
-            "name": "orders",
-            "description": "Operations with orders",
-        },
-    ],
     license_info={
         "name": "The Unlicense",
         "identifier": "Unlicense",
     },
 )
 
-app.include_router(orders.router)
-app.include_router(pairs.router)
+app.include_router(api_router, prefix=settings.API_V1_STR)
