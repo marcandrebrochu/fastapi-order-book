@@ -1,10 +1,14 @@
 from typing import Annotated
 
 from fastapi import APIRouter, Path, Query, status
+from fastapi.responses import JSONResponse
 
 from app.schemas.pair import Pair
 
 router = APIRouter()
+
+# Temp in-memory store for tradeable pairs
+pairs = []
 
 @router.get(
     "/pairs",
@@ -13,7 +17,7 @@ router = APIRouter()
     tags=["pairs"],
 )
 def get_pairs() -> list[Pair]:
-   return []
+   return pairs
 
 @router.post(
     "/pairs",
@@ -35,6 +39,9 @@ def get_pairs() -> list[Pair]:
     tags=["pairs"],
 )
 def add_pair(pair: Pair) -> Pair:
+    if pair in pairs:
+        return JSONResponse(status_code=status.HTTP_409_CONFLICT, content={})
+    pairs.append(pair)
     return pair
 
 @router.get(
