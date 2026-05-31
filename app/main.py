@@ -1,7 +1,6 @@
 from fastapi import FastAPI
 
-from app.routers import orders
-from app.routers import pairs
+from app.routers import orders, pairs
 
 app = FastAPI(
     title="Market Sim",
