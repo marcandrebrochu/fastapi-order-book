@@ -12,7 +12,7 @@ router = APIRouter(
 
 
 @router.get(
-    "/",
+    "",
     summary="Retrieve all order books",
     response_model=BooksPublic,
 )
@@ -30,7 +30,7 @@ def read_book(book_id: str) -> Any:
 
 
 @router.post(
-    "/",
+    "",
     summary="Create a new order book",
     response_model=BookPublic,
     status_code=status.HTTP_201_CREATED,

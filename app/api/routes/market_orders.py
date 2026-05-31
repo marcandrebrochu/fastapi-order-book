@@ -12,7 +12,7 @@ router = APIRouter(
 
 
 @router.post(
-    "/",
+    "",
     summary="Place a market order",
     response_model=ExecutedMarketOrderPublic,
 )

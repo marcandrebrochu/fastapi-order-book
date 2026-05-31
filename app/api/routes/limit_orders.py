@@ -22,7 +22,7 @@ def read_limit_order(order_id: uuid.UUID) -> Any:
 
 
 @router.post(
-    "/",
+    "",
     summary="Place a limit order",
     response_model=LimitOrderPublic,
     status_code=status.HTTP_202_ACCEPTED,
