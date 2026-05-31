@@ -6,8 +6,15 @@ readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
     "fastapi[standard]>=0.136.3",
+    "httpx2>=2.2.0",
+    "pytest>=9.0.3",
     "sqlmodel>=0.0.38",
 ]
 
 [tool.fastapi]
 entrypoint = "app.main:app"
+
+[tool.pytest]
+strict = true
+addopts = ["--import-mode=importlib"]
+pythonpath = ["."]

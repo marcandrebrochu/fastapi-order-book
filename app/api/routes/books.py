@@ -1,4 +1,5 @@
 from typing import Any
+import uuid
 
 from fastapi import APIRouter, status
 
@@ -36,4 +37,4 @@ def read_book(book_id: str) -> Any:
     status_code=status.HTTP_201_CREATED,
 )
 def create_book(book_in: BookCreate) -> Any:
-    pass
+    return BookPublic(base_asset="ABC", quote_asset="XYZ", id=str(uuid.uuid4()))
