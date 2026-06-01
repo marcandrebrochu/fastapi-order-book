@@ -5,6 +5,7 @@ from fastapi import APIRouter, HTTPException, status
 from sqlalchemy.exc import IntegrityError
 from sqlmodel import select
 
+from app import utils
 from app.api.deps import SessionDep
 from app.models import Book, BookCreate, BookPublic, BooksPublic, ConflictMessage
 
@@ -30,8 +31,20 @@ def read_books(session: SessionDep) -> Any:
     summary="Retrieve an order book by its id",
     response_model=BookPublic,
 )
-def read_book(book_id: str) -> Any:
-    pass
+def read_book(book_id: str, session: SessionDep) -> Any:
+    pair = utils.split_book_id(book_id)
+    if pair is None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="invalid book id format",
+        )
+    book = session.get(Book, pair)
+    if book is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="book not found",
+        )
+    return BookPublic(**book.model_dump(), id=book_id)
 
 
 @router.post(
