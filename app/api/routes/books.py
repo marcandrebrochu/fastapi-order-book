@@ -1,9 +1,11 @@
+from datetime import datetime
 from typing import Any
-import uuid
 
-from fastapi import APIRouter, status
+from fastapi import APIRouter, HTTPException, status
+from sqlalchemy.exc import IntegrityError
 
-from app.models import BookCreate, BookPublic, BooksPublic
+from app.api.deps import SessionDep
+from app.models import Book, BookCreate, BookPublic, BooksPublic, ConflictMessage
 
 
 router = APIRouter(
@@ -35,6 +37,27 @@ def read_book(book_id: str) -> Any:
     summary="Create a new order book",
     response_model=BookPublic,
     status_code=status.HTTP_201_CREATED,
+    responses={
+        status.HTTP_409_CONFLICT: {
+            "description": "A book with this base:quote pair already exists.",
+            "model": ConflictMessage,
+        },
+    },
 )
-def create_book(book_in: BookCreate) -> Any:
-    return BookPublic(base_asset="ABC", quote_asset="XYZ", id=str(uuid.uuid4()))
+def create_book(book_in: BookCreate, session: SessionDep) -> Any:
+    book = Book.model_validate(book_in)
+    session.add(book)
+    try:
+        # No need to check for existing book with the same base:quote before trying to insert;
+        # we can rely on sqlite's integrity checks for that, less work for us to do!..
+        session.commit()
+    except IntegrityError:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail=ConflictMessage(
+                message="a book with this base:quote pair already exists",
+                since=datetime.now(),
+            ).model_dump(mode="json"),
+        )
+    session.refresh(book)
+    return BookPublic.from_book(book)

@@ -2,16 +2,25 @@ from datetime import datetime
 from enum import Enum
 import uuid
 
-from sqlmodel import SQLModel
+from pydantic import BaseModel
+from sqlmodel import Field, SQLModel
 
 
 class BookBase(SQLModel):
-    base_asset: str
-    quote_asset: str
+    base_asset: str = Field(primary_key=True)
+    quote_asset: str = Field(primary_key=True)
+
+
+class Book(BookBase, table=True):
+    pass
 
 
 class BookPublic(BookBase):
     id: str # "base:quote", for client convenience
+
+    @classmethod
+    def from_book(cls, book: Book) -> "BookPublic":
+        return cls(**book.model_dump(), id=f"{book.base_asset}:{book.quote_asset}")
 
 
 class BooksPublic(SQLModel):
@@ -58,3 +67,8 @@ class LimitOrderPublic(OrderBase):
 class LimitOrder(OrderBase): # table=True
     id: uuid.UUID
     book_id: str
+
+
+class ConflictMessage(BaseModel):
+    message: str
+    since: datetime
