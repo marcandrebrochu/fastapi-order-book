@@ -27,6 +27,10 @@ class BooksPublic(SQLModel):
     data: list[BookPublic]
     count: int
 
+    @classmethod
+    def from_books(cls, books: list[Book]) -> "BooksPublic":
+        return cls(data=list(map(BookPublic.from_book, books)), count=len(books))
+
 
 class BookCreate(BookBase):
     pass

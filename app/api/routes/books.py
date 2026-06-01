@@ -3,6 +3,7 @@ from typing import Any
 
 from fastapi import APIRouter, HTTPException, status
 from sqlalchemy.exc import IntegrityError
+from sqlmodel import select
 
 from app.api.deps import SessionDep
 from app.models import Book, BookCreate, BookPublic, BooksPublic, ConflictMessage
@@ -19,8 +20,9 @@ router = APIRouter(
     summary="Retrieve all order books",
     response_model=BooksPublic,
 )
-def read_books() -> Any:
-    pass
+def read_books(session: SessionDep) -> Any:
+    books = session.exec(select(Book)).all()
+    return BooksPublic.from_books(list(books))
 
 
 @router.get(
