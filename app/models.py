@@ -12,11 +12,12 @@ class BookBase(SQLModel):
 
 
 class Book(BookBase, table=True):
-    pass
+    created_at: datetime
 
 
 class BookPublic(BookBase):
     id: str # "base:quote", for client convenience
+    created_at: datetime
 
     @classmethod
     def from_book(cls, book: Book) -> "BookPublic":

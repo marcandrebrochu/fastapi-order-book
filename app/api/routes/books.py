@@ -2,7 +2,6 @@ from datetime import datetime
 from typing import Any
 
 from fastapi import APIRouter, HTTPException, status
-from sqlalchemy.exc import IntegrityError
 from sqlmodel import select
 
 from app import utils
@@ -60,19 +59,19 @@ def read_book(book_id: str, session: SessionDep) -> Any:
     },
 )
 def create_book(book_in: BookCreate, session: SessionDep) -> Any:
-    book = Book.model_validate(book_in)
-    session.add(book)
-    try:
-        # No need to check for existing book with the same base:quote before trying to insert;
-        # we can rely on sqlite's integrity checks for that, less work for us to do!..
-        session.commit()
-    except IntegrityError:
+    # Try to find a book having the same id as the user-given one.
+    # TODO(mab): refactor to avoid having to remember which asset comes first when "deriving" the book id from the assets' symbols
+    conficting_book = session.get(Book, (book_in.base_asset, book_in.quote_asset))
+    if conficting_book is not None:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail=ConflictMessage(
                 message="a book with this base:quote pair already exists",
-                since=datetime.now(),
+                since=conficting_book.created_at,
             ).model_dump(mode="json"),
         )
+    book = Book.model_validate({**book_in.model_dump(), "created_at": datetime.now()})
+    session.add(book)
+    session.commit()
     session.refresh(book)
     return BookPublic.from_book(book)
