@@ -69,3 +69,7 @@ The trade settles 6 `CHKP`: B's order is fully filled, while A's is partially fi
 ### Realized as an API
 
 TODO
+
+## Note to eventually somehow include in this readme
+
+- Book's id is interesting because it is derived
