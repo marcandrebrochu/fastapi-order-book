@@ -9,4 +9,8 @@ wheels/
 # Virtual environments
 .venv
 
+# Local VS Code settings
 .vscode
+
+# Data
+database.db
